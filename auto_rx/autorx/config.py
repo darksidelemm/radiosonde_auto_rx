@@ -175,7 +175,6 @@ def read_auto_rx_config(filename, no_sdr_test=False):
         "wideband_sondes": False, # Wideband sonde detection / decoding
         "close_on_encrypted": True,
         "exclude_types": ["IMET1AB","C34C50"], # Sonde types to exclude from detections
-        "carto_api_key": ""
     }
 
     try:
@@ -834,16 +833,6 @@ def read_auto_rx_config(filename, no_sdr_test=False):
                 "Config - No or invalid exclude_types settings, defaulting to [\"IMET1AB\",\"C34C50\"]"
             )
             auto_rx_config["exclude_types"] = ['IMET1AB','C34C50']
-
-        try:
-            auto_rx_config["carto_api_key"] = config.get(
-                "web", "carto_api_key"
-            )
-        except Exception as e:
-            logging.debug(
-                "Config - Missing carto_api_key (new in 1.9.0), using default (none)"
-            )
-            auto_rx_config["carto_api_key"] = "none"
 
         # If we are being called as part of a unit test, just return the config now.
         if no_sdr_test:
