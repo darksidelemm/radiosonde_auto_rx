@@ -525,7 +525,7 @@ max_peaks = 10
 # Scanner - Minimum distance between detected peaks (Hz)
 min_distance = 1000
 # Scanner - Scan Dwell Time - How long to observe the specified spectrum for.
-scan_dwell_time = 20
+scan_dwell_time = 5
 # Scanner - Detection Dwell time - How long to wait for a sonde detection on each peak.
 detect_dwell_time = 5
 # Scanner - Delay between scans. We should delay a short amount between scans to allow for decoders and other actions to jump in.
