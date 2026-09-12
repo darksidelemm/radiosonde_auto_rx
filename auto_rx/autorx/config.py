@@ -937,13 +937,6 @@ def read_auto_rx_config(filename, no_sdr_test=False):
             )
             return None
 
-        # TODO: Revisit this limitation once the OziPlotter output sub-module is complete.
-        if (len(auto_rx_config["sdr_settings"].keys()) > 1) and auto_rx_config[
-            "ozi_enabled"
-        ]:
-            logging.critical("Oziplotter output enabled in a multi-SDR configuration.")
-            return None
-
         if len(auto_rx_config["sdr_settings"].keys()) == 0:
             # We have no SDRs to use!!
             logging.error("Config - No working SDRs! Cannot run...")
