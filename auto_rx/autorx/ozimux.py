@@ -168,6 +168,7 @@ class OziUploader(object):
                 "freq": telemetry["freq"],
                 "temp": telemetry["temp"],
                 "frame": telemetry["frame"],
+                "datetime": telemetry["datetime_dt"].isoformat()
             }
 
             # Add in any extra fields we may care about.
