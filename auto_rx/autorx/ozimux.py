@@ -223,12 +223,15 @@ class OziUploader(object):
                 while not self.input_queue.empty():
                     _telem = self.input_queue.get()
 
-                # Send!
+                    # Send every packet as a payload summary.
+                    if self.payload_summary_port != None:
+                        self.send_payload_summary(_telem)
+                        print(_telem)
+
+                # Only send OziMux messages (is anyone using these anymore?!) every X seconds
                 if self.ozimux_port != None:
                     self.send_ozimux_telemetry(_telem)
 
-                if self.payload_summary_port != None:
-                    self.send_payload_summary(_telem)
 
             time.sleep(self.update_rate)
 
