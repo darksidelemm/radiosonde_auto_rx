@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 #
-#   radiosonde_auto_rx - OziMux Output
+#   radiosonde_auto_rx - Payload Summary Output
 #
-#   Copyright (C) 2018  Mark Jessop <vk5qi@rfhead.net>
+#   Copyright (C) 2026 Mark Jessop <vk5qi@rfhead.net>
 #   Released under GNU GPL v3 or later
 #
 
@@ -18,13 +18,8 @@ class OziUploader(object):
     """ Push radiosonde telemetry out via UDP broadcast to the Horus Chase-Car Utilities
 
     Uploads to:
-        - OziMux / OziPlotter (UDP Broadcast, port 8942 by default) - Refer here for information on the data format:
-            https://github.com/projecthorus/oziplotter/wiki/3---Data-Sources
         - "Payload Summary" (UDP Broadcast, on port 55672 by default)
             Refer here for information: https://github.com/projecthorus/horus_utils/wiki/5.-UDP-Broadcast-Messages#payload-summary-payload_summary
-
-    NOTE: This class is designed to only handle telemetry from a single radiosonde at a time. It should only be operated in a
-    single-SDR configuration, where only one sonde is tracked at a time.
 
     """
 
@@ -48,28 +43,19 @@ class OziUploader(object):
 
     def __init__(
         self,
-        ozimux_host="<broadcast>",
-        ozimux_port=None,
         payload_summary_host="<broadcast>",
         payload_summary_port=None,
-        update_rate=5,
         station="auto_rx",
     ):
         """ Initialise an OziUploader Object.
 
         Args:
-            ozimux_host (str): UDP host to push ozimux/oziplotter messages to.
-            ozimux_port (int): UDP port to push ozimux/oziplotter messages to. Set to None to disable.
             payload_summary_host (str): UDP host to push payload summary messages to.
             payload_summary_port (int): UDP port to push payload summary messages to. Set to None to disable.
-            update_rate (int): Time in seconds between updates.
         """
 
-        self.ozimux_host = ozimux_host
-        self.ozimux_port = ozimux_port
         self.payload_summary_host = payload_summary_host
         self.payload_summary_port = payload_summary_port
-        self.update_rate = update_rate
         self.station = station
 
         # Input Queue.
@@ -80,54 +66,7 @@ class OziUploader(object):
         self.input_thread = Thread(target=self.process_queue)
         self.input_thread.start()
 
-        self.log_info("Started OziMux / Payload Summary Exporter")
-
-    def send_ozimux_telemetry(self, telemetry):
-        """ Send a packet of telemetry into the network in OziMux/OziPlotter-compatible format.
-
-        Args:
-            telemetry (dict): Telemetry dictionary to send.
-
-        """
-
-        _short_time = telemetry["datetime_dt"].strftime("%H:%M:%S")
-        _sentence = "TELEMETRY,%s,%.5f,%.5f,%d\n" % (
-            _short_time,
-            telemetry["lat"],
-            telemetry["lon"],
-            telemetry["alt"],
-        )
-
-        try:
-            _ozisock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-            # Set up socket for broadcast, and allow re-use of the address
-            _ozisock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            _ozisock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            # Under OSX we also need to set SO_REUSEPORT to 1
-            try:
-                _ozisock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-            except:
-                pass
-
-            try:
-                _ozisock.sendto(
-                    _sentence.encode("ascii"), (self.ozimux_host, self.ozimux_port)
-                )
-            # Catch any socket errors, that may occur when attempting to send to a broadcast address
-            # when there is no network connected. In this case, re-try and send to localhost instead.
-            except socket.error as e:
-                self.log_debug(
-                    "Send to broadcast address failed, sending to localhost instead."
-                )
-                _ozisock.sendto(
-                    _sentence.encode("ascii"), ("127.0.0.1", self.ozimux_port)
-                )
-
-            _ozisock.close()
-
-        except Exception as e:
-            self.log_error("Failed to send OziMux packet: %s" % str(e))
+        self.log_info("Started Payload Summary Exporter")
 
     def send_payload_summary(self, telemetry):
         """ Send a payload summary message into the network via UDP broadcast.
@@ -213,8 +152,6 @@ class OziUploader(object):
         """ Process packets from the input queue.
 
         This thread handles packets from the input queue (provided by the decoders)
-        Packets are sorted by ID, and a dictionary entry is created. 
-
         """
 
         while self.input_processing_running:
@@ -227,14 +164,8 @@ class OziUploader(object):
                     # Send every packet as a payload summary.
                     if self.payload_summary_port != None:
                         self.send_payload_summary(_telem)
-                        print(_telem)
 
-                # Only send OziMux messages (is anyone using these anymore?!) every X seconds
-                if self.ozimux_port != None:
-                    self.send_ozimux_telemetry(_telem)
-
-
-            time.sleep(self.update_rate)
+            time.sleep(0.5)
 
     def add(self, telemetry):
         """ Add a dictionary of telemetry to the input queue. 
@@ -251,6 +182,7 @@ class OziUploader(object):
                 return
 
         # Discard encrypted sonde data silently
+        # May need to revisit this if people want this information
         if 'encrypted' in telemetry:
             if telemetry['encrypted']:
                 return None
@@ -276,18 +208,18 @@ class OziUploader(object):
         Args:
             line (str): Message to be logged.
         """
-        logging.debug("OziMux - %s" % line)
+        logging.debug("Payload Summary - %s" % line)
 
     def log_info(self, line):
         """ Helper function to log an informational message with a descriptive heading. 
         Args:
             line (str): Message to be logged.
         """
-        logging.info("OziMux - %s" % line)
+        logging.info("Payload Summary - %s" % line)
 
     def log_error(self, line):
         """ Helper function to log an error message with a descriptive heading. 
         Args:
             line (str): Message to be logged.
         """
-        logging.error("OziMux - %s" % line)
+        logging.error("Payload Summary - %s" % line)

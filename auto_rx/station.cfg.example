@@ -330,24 +330,8 @@ aprs_custom_comment = Clb=<vel_v> t=<temp> h=<humidity> p=<pressure> <freq> Type
 ###########################
 # CHASEMAPPER DATA OUTPUT #
 ###########################
-# Settings for pushing data into Chasemapper and/or OziPlotter
-# Oziplotter receives data via a basic CSV format, via UDP.
-# Chasemapper can receive data in either the basic CSV format, or in the more descriptive 'payload summary' JSON format.
+# Settings for pushing data into Chasemapper and other utilities
 [oziplotter]
-# How often to output data (seconds)
-ozi_update_rate = 5
-
-# Enable the 'OziMux' basic CSV output
-# Note - this cannot be enabled in a multi-SDR configuration.
-ozi_enabled = False
-
-# OziMux UDP target host.
-# Defaults to broadcasting
-ozi_host = <broadcast>
-
-# OziMux UDP output port.
-# Set to 8942 to send packets directly into OziPlotter, or set to 55681 to send via OziMux
-ozi_port = 8942
 
 # Payload summary UDP output, which is the preferred input if using ChaseMapper.
 # Using this output allows multiple sondes to be plotted in Chasemapper.

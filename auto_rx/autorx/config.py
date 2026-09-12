@@ -152,11 +152,7 @@ def read_auto_rx_config(filename, no_sdr_test=False):
         "rotator_home_azimuth": 0,
         "rotator_home_elevation": 0,
         "rotator_azimuth_only": False,
-        # OziExplorer Settings
-        "ozi_enabled": False,
-        "ozi_update_rate": 5,
-        "ozi_host": "<broadcast>",
-        "ozi_port": 55681,
+        # Payload Summary Settings
         "payload_summary_enabled": False,
         "payload_summary_host": "<broadcast>",
         "payload_summary_port": 55672,
@@ -341,12 +337,8 @@ def read_auto_rx_config(filename, no_sdr_test=False):
             )
             auto_rx_config["aprs_upload_rate"] = MINIMUM_APRS_UPDATE_RATE
 
-        # OziPlotter Settings
-        auto_rx_config["ozi_enabled"] = config.getboolean("oziplotter", "ozi_enabled")
-        auto_rx_config["ozi_update_rate"] = config.getint(
-            "oziplotter", "ozi_update_rate"
-        )
-        auto_rx_config["ozi_port"] = config.getint("oziplotter", "ozi_port")
+        # Payload Summary Settings
+
         auto_rx_config["payload_summary_enabled"] = config.getboolean(
             "oziplotter", "payload_summary_enabled"
         )
@@ -792,13 +784,11 @@ def read_auto_rx_config(filename, no_sdr_test=False):
 
         # 1.7.5 - Targeted summary output
         try:
-            auto_rx_config["ozi_host"] = config.get("oziplotter", "ozi_host")
             auto_rx_config["payload_summary_host"] = config.get("oziplotter", "payload_summary_host")
         except:
             logging.warning(
-                "Config - Missing ozi_host or payload_summary_host option (new in v1.7.5), using default (<broadcast>)"
+                "Config - Missing payload_summary_host option (new in v1.7.5), using default (<broadcast>)"
             )
-            auto_rx_config["ozi_host"] = "<broadcast>"
             auto_rx_config["payload_summary_host"] = "<broadcast>"
 
         # 1.8.2 - Real time filtering

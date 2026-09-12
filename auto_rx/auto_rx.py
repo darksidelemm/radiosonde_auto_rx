@@ -1030,18 +1030,8 @@ def main():
         exporter_objects.append(_aprs)
         exporter_functions.append(_aprs.add)
 
-    # OziExplorer
-    if config["ozi_enabled"] or config["payload_summary_enabled"]:
-        if config["ozi_host"]:
-            _ozi_host = config["ozi_host"]
-        else:
-            _ozi_host = None
-
-        if config["ozi_enabled"]: # Causes port to be set to None which disables the export.
-            _ozi_port = config["ozi_port"]
-        else:
-            _ozi_port = None
-
+    # Payload Summary output (Chasemapper)
+    if config["payload_summary_enabled"]:
         if config["payload_summary_host"]:
             _summary_host = config["payload_summary_host"]
         else:
@@ -1053,11 +1043,8 @@ def main():
             _summary_port = None
 
         _ozimux = OziUploader(
-            ozimux_host=_ozi_host,
-            ozimux_port=_ozi_port,
             payload_summary_host=_summary_host,
             payload_summary_port=_summary_port,
-            update_rate=config["ozi_update_rate"],
             station=config["habitat_uploader_callsign"],
         )
 
