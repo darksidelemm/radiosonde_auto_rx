@@ -319,8 +319,9 @@ def handle_scan_results():
             _freq = _sonde[0]
             _type = _sonde[1]
 
-            if _freq in autorx.task_list:
+            if _freq in autorx.task_list and autorx.task_list[_freq]["task"].sonde_type == _type:
                 # Already decoding this sonde, continue.
+                logging.warning(f"Task Manager - Already decoding {_type} on {_freq}, not starting a new decoder.")
                 continue
             else:
 
