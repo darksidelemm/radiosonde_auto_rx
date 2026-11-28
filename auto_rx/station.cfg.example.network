@@ -407,6 +407,10 @@ apprise_urls = []
 #   apprise_urls = ["tgram://bot_token/chat_id"]
 # Multiple destinations
 #   apprise_urls = ["tgram://bot_token/chat_id","discord://your_bot_name@discord_webhook_id/discord_webhook_token/"]
+# Sending an email (using gmail as an example):
+#   apprise_urls = "mailto://yourusername:yourapppassword@gmail.com/destination@myemail.net?format=text"
+#   NOTE: Refer to the Apprise email service details ( https://appriseit.com/services/email/ )
+#   The URL needs ?format=text on the end for email formatting to work correctly.
 
 # Send a notification for each new radiosonde observed.
 launch_notifications = True
